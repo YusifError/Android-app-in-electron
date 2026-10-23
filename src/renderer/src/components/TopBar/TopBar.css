@@ -1,0 +1,286 @@
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 24px;
+
+  background: #171923;
+  color: #f7f7fb;
+  border-bottom: 1px solid #303341;
+}
+
+.topbar__brand,
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar__logo {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+
+  background: #7775f7;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.topbar__title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.topbar__button,
+.topbar__icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 9px 12px;
+  border: 1px solid #3b3e4e;
+  border-radius: 9px;
+
+  background: #252836;
+  color: #f7f7fb;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.topbar__button:hover,
+.topbar__icon-button:hover {
+  background: #35394b;
+}
+
+.topbar__icon-button {
+  width: 40px;
+  height: 40px;
+  font-size: 19px;
+}
+
+.topbar__arrow {
+  font-size: 10px;
+  color: #b8bbca;
+}
+
+.topbar__dropdown {
+  position: relative;
+}
+
+.topbar__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 110;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 210px;
+  padding: 6px;
+
+  background: #252836;
+  border: 1px solid #3b3e4e;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px #0005;
+}
+
+.topbar__menu-item {
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 6px;
+
+  background: transparent;
+  color: #f7f7fb;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.topbar__menu-item:hover {
+  background: #35394b;
+}
+
+.topbar__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+
+  display: grid;
+  place-items: center;
+  padding: 20px;
+
+  background: #0009;
+}
+
+.topbar__modal {
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+  padding: 24px;
+
+  background: #20232f;
+  color: #f7f7fb;
+  border: 1px solid #3b3e4e;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px #0006;
+}
+
+.topbar__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar__modal h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.topbar__modal p {
+  color: #b8bbca;
+  line-height: 1.5;
+}
+
+.topbar__close {
+  border: 0;
+  background: transparent;
+  color: #f7f7fb;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.topbar__modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px;
+
+  background: #171923;
+  color: #f7f7fb;
+  border: 1px solid #3b3e4e;
+  border-radius: 9px;
+  font: inherit;
+}
+
+.topbar__modal textarea:focus {
+  outline: 2px solid #7775f7;
+  outline-offset: 1px;
+}
+
+.topbar__submit {
+  width: 100%;
+  margin-top: 12px;
+  background: #6563e8;
+  border-color: #6563e8;
+}
+
+.topbar__submit:hover {
+  background: #7775f7;
+}
+
+.topbar__modal .topbar__note {
+  margin-bottom: 0;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    padding: 10px 12px;
+  }
+
+  .topbar__actions {
+    gap: 6px;
+  }
+
+  .topbar__report span:last-child {
+    display: none;
+  }
+}
+
+
+/* Базовая геометрия приложения */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+}
+
+/* Не даём старым стилям центрировать саму панель */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  min-height: 64px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Левая и правая стороны не должны схлопываться */
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.topbar__title {
+  white-space: nowrap;
+}
+
+.topbar__button,
+.topbar__icon-button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Не позволяем выпадающему меню сжиматься */
+.topbar__dropdown {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .topbar__actions {
+    gap: 6px;
+  }
+}
