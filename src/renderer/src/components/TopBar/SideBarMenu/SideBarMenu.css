@@ -1,0 +1,73 @@
+/* Боковая панель по умолчанию скрыта за левым краем экрана (-300px) */
+.sidebar {
+  position: fixed;
+  top: 40px; /* Высота вашего топбара, чтобы меню не перекрывало его */
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 40px);
+  background-color: #252526;
+  color: #fff;
+  z-index: 999;
+  transform: translateX(-100%); /* Прячем влево */
+  transition: transform 0.3s ease-in-out; /* Плавное выдвижение */
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Класс, который активируется через React при isOpen = true */
+.sidebar--open {
+  transform: translateX(0); /* Выдвигаем на экран */
+}
+
+/* Полупрозрачный задний фон для закрытия меню по клику в пустоту */
+.sidebar-overlay {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 40px);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay--open {
+  opacity: 1;
+  pointer-events: auto; /* Делаем кликабельным только когда открыто */
+}
+
+/* Стили заголовка и ссылок */
+.sidebar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.sidebar__close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+}
+
+.sidebar__link {
+  color: #ccc;
+  padding: 12px 24px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.sidebar__link:hover {
+  background-color: #37373d;
+  color: #fff;
+}
