@@ -1,286 +1,160 @@
+/* Основной контейнер верхней панели */
+.topbar {
+  /* Электронные свойства */
+  -webkit-app-region: drag;    /* Позволяет перетаскивать окно за панель */
+  user-select: none;            /* Запрещает выделение текста при перетаскивании */
+
+  /* Позиционирование и размеры */
+  display: flex;
+  align-items: center;          /* Центрирует элементы (текст и кнопки) по вертикали */
+  justify-content: space-between; /* Разносит Меню влево, а кнопки вправо */
+  
+  height: 40px;                 /* Фиксированная высота панели */
+  width: 100%;                  /* Растягиваем на всю ширину окна */
+  box-sizing: border-box;       /* Защищает ширину 100% от поломок из-за padding */
+
+  /* Отступы внутри панели */
+  padding-left: 16px;           /* Отступ для "Меню" слева */
+  padding-right: 145px;         /* 🛠️ Отступ справа, чтобы контент не заезжал под кнопки Windows */
+
+  /* Оформление (можно настроить под свой дизайн) */
+  background-color: #1e1e1e;    /* Темный цвет фона панели */
+  border-bottom: 1px solid #2d2d2d; /* Тонкая линия снизу для отделения от контента */
+}
+
+/* Левая часть панели (блок с текстом "Меню") */
+.topbar__left {
+  color: #ffffff;               /* Белый цвет текста */
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Правая часть панели (контейнер для кнопок) */
+.topbar__right {
+  display: flex;
+  gap: 8px;                     /* Расстояние между кнопками */
+  flex-shrink: 0;               /* Запрещает кнопкам сжиматься при сужении окна */
+}
+
+/* Стили для интерактивных кнопок */
+.topbar__button {
+  /* Электронные свойства */
+  -webkit-app-region: no-drag;  /* 🛠️ КРИТИЧЕСКИ ВАЖНО: возвращает кнопкам кликабельность */
+  cursor: pointer;              /* Меняет курсор на палец при наведении */
+
+  /* Внутренние отступы и размеры */
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: sans-serif;
+
+  /* Цвета и рамки (в стиле темной темы) */
+  color: #cccccc;
+  background-color: #2d2d2d;
+  border: 1px solid #3f3f3f;
+  border-radius: 4px;           /* Легкое скругление углов */
+  
+  /* Плавный переход при наведении */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Эффект при наведении курсора на кнопку */
+.topbar__button:hover {
+  background-color: #3f3f3f;
+  color: #ffffff;
+}
+
+/* Эффект при клике на кнопку */
+.topbar__button:active {
+  background-color: #1a1a1a;
+}
 
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
+  -webkit-app-region: drag;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-
+  
+  height: 40px;
   width: 100%;
   box-sizing: border-box;
-  padding: 12px 24px;
 
-  background: #171923;
-  color: #f7f7fb;
-  border-bottom: 1px solid #303341;
+  padding-left: 16px;
+  padding-right: 0; /* 🛠️ ИЗМЕНЕНИЕ: Больше не нужен огромный отступ */
+
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #2d2d2d;
 }
 
-.topbar__brand,
-.topbar__actions {
+.topbar__left {
+  color: #ffffff;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: 500;
+}
+
+.topbar__right {
   display: flex;
-  align-items: center;
+  align-items: center; /* Центрируем кнопки по вертикали */
   gap: 12px;
+  flex-shrink: 0;
+  height: 100%;       /* Растягиваем блок на всю высоту топ-бара */
 }
 
-.topbar__logo {
-  display: grid;
-  place-items: center;
+/* Старые пользовательские кнопки (Настройки, Ошибки) */
+.topbar__button {
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: #cccccc;
+  background-color: #2d2d2d;
+  border: 1px solid #3f3f3f;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.topbar__button:hover { background-color: #3f3f3f; color: #fff; }
 
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-
-  background: #7775f7;
-  color: white;
-  font-size: 20px;
-  font-weight: 700;
+/* 🛠️ СТИЛИЗАЦИЯ СИСТЕМНЫХ КНОПОК */
+.topbar__controls {
+  display: flex;
+  height: 100%; /* Чтобы кнопки были во всю высоту панели, как в Windows */
 }
 
-.topbar__title {
-  font-size: 17px;
-  font-weight: 600;
-}
-
-.topbar__button,
-.topbar__icon-button {
-  display: inline-flex;
+.control-btn {
+  -webkit-app-region: no-drag; /* КРИТИЧЕСКИ ВАЖНО: чтобы кнопки нажимались */
+  border: none;
+  background: transparent;
+  color: #aaaaaa;
+  width: 46px;                /* Стандартная ширина кнопок Windows */
+  height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-
-  padding: 9px 12px;
-  border: 1px solid #3b3e4e;
-  border-radius: 9px;
-
-  background: #252836;
-  color: #f7f7fb;
-  font: inherit;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background-color 0.15s, color 0.15s;
 }
 
-.topbar__button:hover,
-.topbar__icon-button:hover {
-  background: #35394b;
+/* Эффект наведения для кнопок Свернуть и Развернуть */
+.control-btn:hover {
+  background-color: #2d2d2d;
+  color: #ffffff;
 }
 
-.topbar__icon-button {
-  width: 40px;
-  height: 40px;
-  font-size: 19px;
+/* Эффект наведения для кнопки Закрыть (традиционный красный цвет) */
+.control-btn.close:hover {
+  background-color: #e81123;
+  color: #ffffff;
 }
 
-.topbar__arrow {
-  font-size: 10px;
-  color: #b8bbca;
+/* Эффект при нажатии */
+.control-btn:active {
+  background-color: #3d3d3d;
 }
-
-.topbar__dropdown {
-  position: relative;
-}
-
-.topbar__menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 110;
-
-  display: flex;
-  flex-direction: column;
-  min-width: 210px;
-  padding: 6px;
-
-  background: #252836;
-  border: 1px solid #3b3e4e;
-  border-radius: 10px;
-  box-shadow: 0 12px 30px #0005;
-}
-
-.topbar__menu-item {
-  padding: 11px 12px;
-  border: 0;
-  border-radius: 6px;
-
-  background: transparent;
-  color: #f7f7fb;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-}
-
-.topbar__menu-item:hover {
-  background: #35394b;
-}
-
-.topbar__overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-
-  display: grid;
-  place-items: center;
-  padding: 20px;
-
-  background: #0009;
-}
-
-.topbar__modal {
-  width: 100%;
-  max-width: 460px;
-  box-sizing: border-box;
-  padding: 24px;
-
-  background: #20232f;
-  color: #f7f7fb;
-  border: 1px solid #3b3e4e;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px #0006;
-}
-
-.topbar__modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.topbar__modal h2 {
-  margin: 0;
-  font-size: 21px;
-}
-
-.topbar__modal p {
-  color: #b8bbca;
-  line-height: 1.5;
-}
-
-.topbar__close {
-  border: 0;
-  background: transparent;
-  color: #f7f7fb;
-  font-size: 28px;
-  cursor: pointer;
-}
-
-.topbar__modal textarea {
-  width: 100%;
-  box-sizing: border-box;
-  resize: vertical;
-  padding: 12px;
-
-  background: #171923;
-  color: #f7f7fb;
-  border: 1px solid #3b3e4e;
-  border-radius: 9px;
-  font: inherit;
-}
-
-.topbar__modal textarea:focus {
-  outline: 2px solid #7775f7;
-  outline-offset: 1px;
-}
-
-.topbar__submit {
-  width: 100%;
-  margin-top: 12px;
-  background: #6563e8;
-  border-color: #6563e8;
-}
-
-.topbar__submit:hover {
-  background: #7775f7;
-}
-
-.topbar__modal .topbar__note {
-  margin-bottom: 0;
-  font-size: 12px;
-}
-
-@media (max-width: 600px) {
-  .topbar {
-    padding: 10px 12px;
-  }
-
-  .topbar__actions {
-    gap: 6px;
-  }
-
-  .topbar__report span:last-child {
-    display: none;
-  }
-}
-
-
-/* Базовая геометрия приложения */
-html,
-body,
-#root {
-  width: 100%;
-  min-width: 0;
-  min-height: 100%;
-  margin: 0;
-}
-
-/* Не даём старым стилям центрировать саму панель */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-
-  width: 100%;
-  min-height: 64px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
-/* Левая и правая стороны не должны схлопываться */
-.topbar__brand {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  min-width: 0;
-  white-space: nowrap;
-}
-
-.topbar__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-.topbar__title {
-  white-space: nowrap;
-}
-
-.topbar__button,
-.topbar__icon-button {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-/* Не позволяем выпадающему меню сжиматься */
-.topbar__dropdown {
-  flex-shrink: 0;
-}
-
-@media (max-width: 600px) {
-  .topbar {
-    gap: 10px;
-    padding: 10px 12px;
-  }
-
-  .topbar__actions {
-    gap: 6px;
-  }
+.control-btn.close:active {
+  background-color: #f1707a;
 }
