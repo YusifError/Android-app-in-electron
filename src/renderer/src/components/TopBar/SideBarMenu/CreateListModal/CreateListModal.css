@@ -1,0 +1,324 @@
+
+/* Затемнение фона */
+.create-list-overlay {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 40px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1001;
+
+  animation: overlay-appear 0.2s ease;
+}
+
+/* Модальное окно */
+.create-list-modal {
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+
+  padding: 22px;
+  box-sizing: border-box;
+
+  background: #252526;
+  border: 1px solid #3c3c3c;
+  border-radius: 12px;
+
+  color: #fff;
+
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+  animation: modal-appear 0.2s ease;
+}
+
+/* Заголовок */
+.create-list-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.create-list-modal__header h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* Закрытие окна */
+.create-list-modal__close {
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+  color: #aaa;
+
+  font-size: 22px;
+  cursor: pointer;
+
+  transition: background 0.2s, color 0.2s;
+}
+
+.create-list-modal__close:hover {
+  background: #3a3a3d;
+  color: #fff;
+}
+
+/* Поля формы */
+.create-list-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin-bottom: 22px;
+}
+
+.create-list-modal__field > label,
+.create-list-modal__hex-field label {
+  font-size: 13px;
+  color: #ccc;
+}
+
+/* Поле названия */
+.create-list-modal__field input[type="text"],
+.create-list-modal__hex-field input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  background: #1e1e1f;
+  border: 1px solid #444;
+  border-radius: 7px;
+
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition: border-color 0.2s;
+}
+
+.create-list-modal__field input::placeholder,
+.create-list-modal__hex-field input::placeholder {
+  color: #777;
+}
+
+.create-list-modal__field input:focus,
+.create-list-modal__hex-field input:focus {
+  border-color: #64B5F6;
+}
+
+/* Кнопка выбора цвета */
+.create-list-modal__palette-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 10px 12px;
+
+  background: #1e1e1f;
+  border: 1px solid #444;
+  border-radius: 7px;
+
+  color: #ccc;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.create-list-modal__palette-toggle:hover {
+  background: #303032;
+  border-color: #666;
+}
+
+/* Предпросмотр выбранного цвета */
+.create-list-modal__color-preview {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+/* HEX-код на кнопке */
+.create-list-modal__selected-code {
+  margin-left: auto;
+
+  color: #888;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* Палитра цветов */
+.create-list-modal__colors {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 12px;
+
+  padding: 14px;
+
+  background: #1e1e1f;
+  border: 1px solid #3c3c3c;
+  border-radius: 7px;
+
+  animation: palette-appear 0.2s ease;
+}
+
+/* Отдельный цвет */
+.create-list-modal__color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  padding: 0;
+
+  border: 2px solid transparent;
+  border-radius: 50%;
+
+  color: #fff;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.create-list-modal__color:hover {
+  transform: scale(1.12);
+}
+
+.create-list-modal__color--selected {
+  box-shadow:
+    0 0 0 2px #1e1e1f,
+    0 0 0 3px #fff;
+}
+
+/* Поле собственного HEX-кода */
+.create-list-modal__hex-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin-top: 15px;
+}
+
+.create-list-modal__hex-field input {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.create-list-modal__hex-field input[aria-invalid="true"] {
+  border-color: #E57373;
+}
+
+/* Ошибка HEX-кода */
+.create-list-modal__color-error {
+  color: #E57373;
+  font-size: 11px;
+}
+
+/* Кнопки */
+.create-list-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 28px;
+}
+
+.create-list-modal__actions button {
+  padding: 9px 16px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.create-list-modal__cancel {
+  background: #3a3a3d;
+  color: #ccc;
+}
+
+.create-list-modal__cancel:hover {
+  background: #48484c;
+  color: #fff;
+}
+
+.create-list-modal__submit {
+  background: #3578d4;
+  color: #fff;
+}
+
+.create-list-modal__submit:hover:not(:disabled) {
+  background: #4389e5;
+}
+
+.create-list-modal__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Анимации */
+@keyframes overlay-appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes palette-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
