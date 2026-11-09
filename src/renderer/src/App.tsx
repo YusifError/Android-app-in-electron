@@ -5,7 +5,11 @@ import TopBar from './components/TopBar/TopBar'
 import SideBarMenu from './components/TopBar/SideBarMenu/SideBarMenu'
 import MainContent from './components/MainContent/MainContent'
 
-import type { Task, TaskList } from './components/TopBar/SideBarMenu/SideBarMenu.types'
+import type {
+  Task,
+  TaskDraft,
+  TaskList
+} from './components/TopBar/SideBarMenu/SideBarMenu.types'
 
 import type { CreateListData } from './components/TopBar/SideBarMenu/CreateListModal/CreateListModal'
 
@@ -18,6 +22,7 @@ function App(): React.JSX.Element {
   // ID выбранного списка
   const [activeListId, setActiveListId] = useState<string | null>(null)
 
+  // Открытие и закрытие Sidebar
   const toggleMenu = (): void => {
     setIsMenuOpen(prev => !prev)
   }
@@ -54,19 +59,20 @@ function App(): React.JSX.Element {
     setActiveListId(prev => prev === id ? null : prev)
   }
 
-  // Добавление задачи в активный список
-  const handleAddTask = (title: string): void => {
-    if (!activeListId) return
-
+  // Создание задачи в выбранном списке
+  const handleCreateTask = (
+    listId: string,
+    data: TaskDraft
+  ): void => {
     const newTask: Task = {
       id: crypto.randomUUID(),
-      title,
+      ...data,
       isCompleted: false
     }
 
     setTaskLists(prev =>
       prev.map(list =>
-        list.id === activeListId
+        list.id === listId
           ? {
               ...list,
               tasks: [...list.tasks, newTask]
@@ -74,22 +80,46 @@ function App(): React.JSX.Element {
           : list
       )
     )
+
+    // Открываем список, в который добавили задачу
+    setActiveListId(listId)
   }
 
   // Изменение статуса задачи
-  const handleToggleTask = (taskId: string): void => {
-    if (!activeListId) return
-
+  const handleToggleTask = (
+    listId: string,
+    taskId: string
+  ): void => {
     setTaskLists(prev =>
       prev.map(list =>
-        list.id === activeListId
+        list.id === listId
           ? {
               ...list,
               tasks: list.tasks.map(task =>
                 task.id === taskId
-                  ? { ...task, isCompleted: !task.isCompleted }
+                  ? {
+                      ...task,
+                      isCompleted: !task.isCompleted
+                    }
                   : task
               )
+            }
+          : list
+      )
+    )
+  }
+
+  // Удаление задачи
+  const handleDeleteTask = (
+    listId: string,
+    taskId: string
+  ): void => {
+    setTaskLists(prev =>
+      prev.map(list =>
+        list.id === listId
+          ? {
+              ...list,
+              tasks: list.tasks.filter(task => task.id !== taskId)
             }
           : list
       )
@@ -118,8 +148,10 @@ function App(): React.JSX.Element {
 
       <MainContent
         activeList={activeList}
-        onAddTask={handleAddTask}
+        taskLists={taskLists}
+        onCreateTask={handleCreateTask}
         onToggleTask={handleToggleTask}
+        onDeleteTask={handleDeleteTask}
       />
     </>
   )

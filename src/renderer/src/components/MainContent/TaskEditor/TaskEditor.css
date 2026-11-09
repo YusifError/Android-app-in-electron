@@ -1,0 +1,363 @@
+
+/* Полноэкранная страница редактора */
+.task-editor-screen {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 1000;
+  overflow-y: auto;
+
+  box-sizing: border-box;
+  padding: 30px 20px;
+
+  background: #1e1e1f;
+  color: #fff;
+
+  animation: task-editor-appear 0.2s ease;
+}
+
+/* Контейнер */
+.task-editor {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Верхняя панель */
+.task-editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 35px;
+}
+
+.task-editor__header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Возврат назад */
+.task-editor__back {
+  padding: 8px 0;
+
+  border: none;
+  background: transparent;
+
+  color: #aaa;
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.task-editor__back:hover {
+  color: #fff;
+}
+
+/* Название задачи */
+.task-editor__title {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 14px 0;
+  margin-bottom: 28px;
+
+  border: none;
+  border-bottom: 1px solid #414143;
+  background: transparent;
+
+  color: #fff;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 500;
+
+  outline: none;
+}
+
+.task-editor__title::placeholder {
+  color: #777;
+}
+
+.task-editor__title:focus {
+  border-bottom-color: #64B5F6;
+}
+
+/* Секции */
+.task-editor__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-bottom: 27px;
+}
+
+.task-editor__section h3 {
+  margin: 0;
+
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Общие поля */
+.task-editor__section input:not([type="file"]),
+.task-editor__section textarea,
+.task-editor__section select {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 12px;
+
+  border: 1px solid #3c3c3c;
+  border-radius: 7px;
+
+  background: #252526;
+  color: #eee;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+
+  transition: border-color 0.2s;
+}
+
+.task-editor__section input:focus,
+.task-editor__section textarea:focus,
+.task-editor__section select:focus {
+  border-color: #64B5F6;
+}
+
+/* Заметка */
+.task-editor__section textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.task-editor__section textarea::placeholder,
+.task-editor__section input::placeholder {
+  color: #777;
+}
+
+/* Кнопка прикрепления */
+.task-editor__attachment-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+
+  padding: 11px 15px;
+
+  border: 1px solid #444;
+  border-radius: 7px;
+
+  background: #252526;
+  color: #ccc;
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: background 0.2s, color 0.2s;
+}
+
+.task-editor__attachment-button:hover {
+  background: #37373d;
+  color: #fff;
+}
+
+/* Предпросмотр фотографии */
+.task-editor__attachment-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px;
+
+  border: 1px solid #3c3c3c;
+  border-radius: 8px;
+
+  background: #252526;
+}
+
+.task-editor__attachment-preview img {
+  width: 90px;
+  height: 70px;
+
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.task-editor__attachment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  min-width: 0;
+
+  font-size: 12px;
+  color: #ccc;
+}
+
+.task-editor__attachment-info span {
+  overflow-wrap: anywhere;
+}
+
+.task-editor__attachment-info button {
+  width: fit-content;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #E57373;
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.task-editor__error {
+  margin: 0;
+  color: #E57373;
+  font-size: 12px;
+}
+
+/* Добавление подзадачи */
+.task-editor__subtask-input {
+  display: flex;
+  gap: 8px;
+}
+
+.task-editor__subtask-input input {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-editor__subtask-input button {
+  width: 42px;
+  flex-shrink: 0;
+
+  border: 1px solid #444;
+  border-radius: 7px;
+
+  background: #303033;
+  color: #fff;
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.task-editor__subtask-input button:hover:not(:disabled) {
+  background: #444;
+}
+
+.task-editor__subtask-input button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Добавленные подзадачи */
+.task-editor__subtasks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.task-editor__subtask {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 9px 12px;
+
+  border-radius: 6px;
+  background: #252526;
+
+  color: #ccc;
+  font-size: 13px;
+}
+
+.task-editor__subtask button {
+  border: none;
+  background: transparent;
+
+  color: #888;
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+.task-editor__subtask button:hover {
+  color: #E57373;
+}
+
+/* Действия */
+.task-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 20px 0 35px;
+  margin-top: 10px;
+
+  border-top: 1px solid #353536;
+}
+
+.task-editor__actions button {
+  padding: 10px 17px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.task-editor__cancel {
+  background: #3a3a3d;
+  color: #ccc;
+}
+
+.task-editor__cancel:hover {
+  background: #48484c;
+  color: #fff;
+}
+
+.task-editor__submit {
+  background: #3578d4;
+  color: #fff;
+}
+
+.task-editor__submit:hover:not(:disabled) {
+  background: #4389e5;
+}
+
+.task-editor__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Анимация появления */
+@keyframes task-editor-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

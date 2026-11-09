@@ -1,13 +1,14 @@
 
 /* Центральная область */
 .main-content {
-  box-sizing: border-box;
+  position: relative;
 
+  box-sizing: border-box;
   width: 100%;
   min-height: calc(100vh - 40px);
 
   margin-top: 40px;
-  padding: 30px;
+  padding: 30px 34px 110px;
 
   color: #fff;
 }
@@ -18,7 +19,7 @@
   align-items: center;
   gap: 12px;
 
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .main-content__header h1 {
@@ -28,75 +29,15 @@
   font-weight: 600;
 }
 
-/* Цвет списка */
+/* Цветной индикатор */
 .main-content__color {
   width: 13px;
   height: 13px;
 
   flex-shrink: 0;
   border-radius: 50%;
-}
 
-/* Форма добавления задачи */
-.main-content__add-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  width: 100%;
-  max-width: 600px;
-
-  margin-bottom: 25px;
-}
-
-.main-content__add-form input {
-  flex: 1;
-  min-width: 0;
-
-  padding: 11px 13px;
-
-  background: #252526;
-  border: 1px solid #3c3c3c;
-  border-radius: 7px;
-
-  color: #fff;
-  font-family: inherit;
-  font-size: 14px;
-
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.main-content__add-form input::placeholder {
-  color: #777;
-}
-
-.main-content__add-form input:focus {
-  border-color: #64B5F6;
-}
-
-.main-content__add-form button {
-  padding: 11px 16px;
-
-  background: #3578d4;
-  border: none;
-  border-radius: 7px;
-
-  color: #fff;
-  font-family: inherit;
-  font-size: 13px;
-
-  cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
-}
-
-.main-content__add-form button:hover:not(:disabled) {
-  background: #4389e5;
-}
-
-.main-content__add-form button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  background-color: var(--list-color);
 }
 
 /* Контейнер задач */
@@ -106,29 +47,40 @@
   gap: 6px;
 
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
 }
 
-/* Отдельная задача */
+/* Строка задачи */
+.main-content__task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 43px;
+  padding: 4px 8px 4px 12px;
+
+  border-radius: 7px;
+
+  transition: background 0.2s;
+}
+
+.main-content__task-row:hover {
+  background: #252526;
+}
+
+/* Основная часть задачи */
 .main-content__task {
   display: flex;
   align-items: center;
   gap: 11px;
 
-  padding: 11px 12px;
-
-  border-radius: 7px;
+  flex: 1;
+  min-width: 0;
 
   color: #ccc;
   font-size: 14px;
 
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.main-content__task:hover {
-  background: #252526;
-  color: #fff;
 }
 
 /* Чекбокс */
@@ -138,8 +90,13 @@
 
   flex-shrink: 0;
 
-  accent-color: #64B5F6;
+  accent-color: var(--list-color);
   cursor: pointer;
+}
+
+/* Название задачи */
+.main-content__task span {
+  overflow-wrap: anywhere;
 }
 
 /* Выполненная задача */
@@ -151,8 +108,94 @@
   text-decoration: line-through;
 }
 
+/* Дополнительная информация */
+.main-content__task-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #858585;
+  font-size: 11px;
+}
+
+/* Удаление задачи */
+.main-content__delete-task {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+
+  color: #888;
+  font-size: 19px;
+
+  opacity: 0;
+  cursor: pointer;
+
+  transition: opacity 0.2s, background 0.2s, color 0.2s;
+}
+
+.main-content__task-row:hover .main-content__delete-task,
+.main-content__task-row:focus-within .main-content__delete-task {
+  opacity: 1;
+}
+
+.main-content__delete-task:hover {
+  background: #493030;
+  color: #ff8585;
+}
+
 /* Пустой список */
 .main-content__empty {
   color: #888;
   font-size: 14px;
+}
+
+/* Большая кнопка создания задачи */
+.main-content__add-task-button {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 66px;
+  height: 66px;
+
+  border: 3px solid;
+  border-radius: 50%;
+
+  background: #252526;
+
+  font-family: inherit;
+  font-size: 39px;
+  font-weight: 300;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.main-content__add-task-button:hover {
+  transform: scale(1.08);
+  background: #303033;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.main-content__add-task-button:active {
+  transform: scale(0.96);
 }
