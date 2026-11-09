@@ -1,5 +1,13 @@
 
 import { randomUUID } from 'node:crypto'
+
+import {
+  getTasksForLists,
+  getAttachmentPathsForList,
+  removeStoredAttachmentFiles,
+  type StoredTask
+} from './tasks'
+
 import { getDatabase } from './db'
 
 export interface CreateTaskListInput {
@@ -11,17 +19,16 @@ export interface StoredTaskList {
   id: string
   name: string
   color: string
-  tasks: []
+  tasks: StoredTask[]
 }
 
-// Структура строки, которую получаем из SQLite
 interface TaskListRow {
   id: string
   name: string
   color: string
 }
 
-// Получение всех списков
+// Получение всех списков вместе с задачами
 export function getTaskLists(): StoredTaskList[] {
   const db = getDatabase()
 
@@ -31,11 +38,15 @@ export function getTaskLists(): StoredTaskList[] {
     ORDER BY created_at ASC, id ASC
   `).all() as TaskListRow[]
 
+  const tasksByList = getTasksForLists(
+    rows.map(row => row.id)
+  )
+
   return rows.map(row => ({
     id: row.id,
     name: row.name,
     color: row.color,
-    tasks: []
+    tasks: tasksByList[row.id] ?? []
   }))
 }
 
@@ -71,14 +82,20 @@ export function createTaskList(
   }
 }
 
-// Удаление списка
+// Удаление списка вместе с его задачами и фотографиями
 export function deleteTaskList(id: string): boolean {
   const db = getDatabase()
+
+  const attachmentPaths = getAttachmentPathsForList(id)
 
   const result = db.prepare(`
     DELETE FROM task_lists
     WHERE id = ?
   `).run(id)
+
+  if (result.changes > 0) {
+    removeStoredAttachmentFiles(attachmentPaths)
+  }
 
   return result.changes > 0
 }

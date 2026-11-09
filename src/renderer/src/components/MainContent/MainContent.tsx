@@ -146,8 +146,8 @@ function MainContent({
           taskLists={taskLists}
           defaultListId={activeList.id}
           onCancel={() => setIsTaskEditorOpen(false)}
-          onSave={(listId, data) => {
-            onCreateTask(listId, data)
+          onSave={async (listId, data) => {
+            await onCreateTask(listId, data)
             setIsTaskEditorOpen(false)
           }}
         />

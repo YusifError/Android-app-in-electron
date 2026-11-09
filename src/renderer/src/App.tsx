@@ -6,7 +6,6 @@ import SideBarMenu from './components/TopBar/SideBarMenu/SideBarMenu'
 import MainContent from './components/MainContent/MainContent'
 
 import type {
-  Task,
   TaskDraft,
   TaskList
 } from './components/TopBar/SideBarMenu/SideBarMenu.types'
@@ -14,19 +13,23 @@ import type {
 import type { CreateListData } from './components/TopBar/SideBarMenu/CreateListModal/CreateListModal'
 
 function App(): React.JSX.Element {
+  // Состояние бокового меню
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
 
-  // Списки приложения
+  // Все списки приложения
   const [taskLists, setTaskLists] = useState<TaskList[]>([])
 
-  // Выбранный список
+  // ID выбранного списка
   const [activeListId, setActiveListId] = useState<string | null>(null)
 
-  // Загрузка данных из SQLite при запуске
+  // =====================================
+  // ЗАГРУЗКА ДАННЫХ
+  // =====================================
+
   useEffect(() => {
     let isMounted = true
 
-    const loadTaskLists = async (): Promise<void> => {
+    const loadData = async (): Promise<void> => {
       try {
         const lists = await window.api.database.getTaskLists()
 
@@ -34,37 +37,28 @@ function App(): React.JSX.Element {
           setTaskLists(lists)
         }
       } catch (error) {
-        console.error('Failed to load task lists:', error)
+        console.error('Failed to load data:', error)
 
         if (isMounted) {
-          window.alert('Не удалось загрузить списки из базы данных.')
+          window.alert('Не удалось загрузить данные.')
         }
       }
     }
 
-    loadTaskLists()
+    loadData()
 
     return () => {
       isMounted = false
     }
   }, [])
 
-  // Открытие Sidebar
+  // =====================================
+  // SIDEBAR
+  // =====================================
+
+  // Открытие и закрытие меню
   const toggleMenu = (): void => {
     setIsMenuOpen(prev => !prev)
-  }
-
-  // Создание списка в SQLite
-  const handleCreateList = async (data: CreateListData): Promise<void> => {
-    try {
-      const newList = await window.api.database.createTaskList(data)
-
-      setTaskLists(prev => [...prev, newList])
-      setActiveListId(newList.id)
-    } catch (error) {
-      console.error('Failed to create task list:', error)
-      window.alert('Не удалось создать список.')
-    }
   }
 
   // Выбор списка
@@ -73,102 +67,193 @@ function App(): React.JSX.Element {
     setIsMenuOpen(false)
   }
 
-  // Возврат на главный экран
+  // Возвращение на главный экран
   const handleGoHome = (): void => {
     setActiveListId(null)
     setIsMenuOpen(false)
   }
 
-  // Удаление списка из SQLite
+  // =====================================
+  // СПИСКИ
+  // =====================================
+
+  // Создание списка
+  const handleCreateList = async (
+    data: CreateListData
+  ): Promise<void> => {
+    try {
+      const newList = await window.api.database.createTaskList(data)
+
+      setTaskLists(prev => [...prev, newList])
+      setActiveListId(newList.id)
+
+    } catch (error) {
+      console.error('Failed to create list:', error)
+      window.alert('Не удалось создать список.')
+    }
+  }
+
+  // Удаление списка
   const handleDeleteList = async (id: string): Promise<void> => {
     try {
       const deleted = await window.api.database.deleteTaskList(id)
 
       if (!deleted) return
 
-      setTaskLists(prev => prev.filter(list => list.id !== id))
+      setTaskLists(prev =>
+        prev.filter(list => list.id !== id)
+      )
 
-      setActiveListId(prev => prev === id ? null : prev)
+      // Если удалили открытый список,
+      // возвращаемся на главный экран
+      setActiveListId(prev =>
+        prev === id ? null : prev
+      )
+
     } catch (error) {
-      console.error('Failed to delete task list:', error)
+      console.error('Failed to delete list:', error)
       window.alert('Не удалось удалить список.')
     }
   }
 
-  // Создание задачи (пока только в React state)
-  const handleCreateTask = (
+  // =====================================
+  // ЗАДАЧИ
+  // =====================================
+
+  // Создание задачи
+  const handleCreateTask = async (
     listId: string,
     data: TaskDraft
-  ): void => {
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      ...data,
-      isCompleted: false
+  ): Promise<void> => {
+    try {
+      // Сохраняем задачу в SQLite
+      const newTask = await window.api.database.createTask(
+        listId,
+        data
+      )
+
+      // Обновляем состояние React
+      setTaskLists(prev =>
+        prev.map(list =>
+          list.id === listId
+            ? {
+                ...list,
+                tasks: [...list.tasks, newTask]
+              }
+            : list
+        )
+      )
+
+      // Открываем список, в который добавили задачу
+      setActiveListId(listId)
+
+    } catch (error) {
+      console.error('Failed to create task:', error)
+
+      // Передаём ошибку в TaskEditor
+      throw error
     }
-
-    setTaskLists(prev =>
-      prev.map(list =>
-        list.id === listId
-          ? {
-              ...list,
-              tasks: [...list.tasks, newTask]
-            }
-          : list
-      )
-    )
-
-    setActiveListId(listId)
   }
 
-  // Изменение статуса задачи (пока только в React state)
-  const handleToggleTask = (
+  // Изменение статуса задачи
+  const handleToggleTask = async (
     listId: string,
     taskId: string
-  ): void => {
-    setTaskLists(prev =>
-      prev.map(list =>
-        list.id === listId
-          ? {
-              ...list,
-              tasks: list.tasks.map(task =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      isCompleted: !task.isCompleted
-                    }
-                  : task
-              )
-            }
-          : list
+  ): Promise<void> => {
+    // Находим задачу в текущем состоянии
+    const list = taskLists.find(item => item.id === listId)
+    const task = list?.tasks.find(item => item.id === taskId)
+
+    if (!task) return
+
+    const newCompletedStatus = !task.isCompleted
+
+    try {
+      // Обновляем статус в SQLite
+      const updated = await window.api.database.setTaskCompleted(
+        listId,
+        taskId,
+        newCompletedStatus
       )
-    )
+
+      if (!updated) return
+
+      // Обновляем React state
+      setTaskLists(prev =>
+        prev.map(item =>
+          item.id === listId
+            ? {
+                ...item,
+                tasks: item.tasks.map(currentTask =>
+                  currentTask.id === taskId
+                    ? {
+                        ...currentTask,
+                        isCompleted: newCompletedStatus
+                      }
+                    : currentTask
+                )
+              }
+            : item
+        )
+      )
+
+    } catch (error) {
+      console.error('Failed to update task:', error)
+      window.alert('Не удалось обновить задачу.')
+    }
   }
 
-  // Удаление задачи (пока только в React state)
-  const handleDeleteTask = (
+  // Удаление задачи
+  const handleDeleteTask = async (
     listId: string,
     taskId: string
-  ): void => {
-    setTaskLists(prev =>
-      prev.map(list =>
-        list.id === listId
-          ? {
-              ...list,
-              tasks: list.tasks.filter(task => task.id !== taskId)
-            }
-          : list
+  ): Promise<void> => {
+    try {
+      // Удаляем задачу из SQLite
+      const deleted = await window.api.database.deleteTask(
+        listId,
+        taskId
       )
-    )
+
+      if (!deleted) return
+
+      // Обновляем React state
+      setTaskLists(prev =>
+        prev.map(list =>
+          list.id === listId
+            ? {
+                ...list,
+                tasks: list.tasks.filter(
+                  task => task.id !== taskId
+                )
+              }
+            : list
+        )
+      )
+
+    } catch (error) {
+      console.error('Failed to delete task:', error)
+      window.alert('Не удалось удалить задачу.')
+    }
   }
 
-  // Получаем активный список
+  // =====================================
+  // АКТИВНЫЙ СПИСОК
+  // =====================================
+
   const activeList = taskLists.find(
     list => list.id === activeListId
   ) ?? null
 
+  // =====================================
+  // RENDER
+  // =====================================
+
   return (
     <>
-      <TopBar onMenuClick={toggleMenu} />
+      <TopBar
+        onMenuClick={toggleMenu}
+      />
 
       <SideBarMenu
         isOpen={isMenuOpen}
