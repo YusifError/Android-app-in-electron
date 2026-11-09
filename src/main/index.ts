@@ -1,16 +1,22 @@
+
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import { join } from 'node:path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
+import {
+  initializeDatabase,
+  closeDatabase
+} from './database/db'
+
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
     autoHideMenuBar: true,
-    titleBarStyle: 'hidden', // 👈 ADD THIS: Hides default logo and title bar
-    // titleBarOverlay: true,          // 👈 OPTIONAL: Keeps standard minimize/maximize/close buttons on Windows/Linux
+
+    titleBarStyle: 'hidden',
+
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -23,6 +29,7 @@ function createWindow(): void {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
+
     return { action: 'deny' }
   })
 
@@ -34,14 +41,22 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  try {
+    // Инициализируем SQLite перед запуском окна
+    initializeDatabase()
+  } catch (error) {
+    console.error('Failed to initialize SQLite:', error)
+
+    app.quit()
+    return
+  }
+
   electronApp.setAppUserModelId('com.electron')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // 👈 OPTIONAL: This electron-toolkit helper allows your React side
-  // to easily handle window controls if you build custom HTML buttons later
   optimizer.registerFramelessWindowIpc()
 
   ipcMain.on('ping', () => console.log('pong'))
@@ -49,8 +64,15 @@ app.whenReady().then(() => {
   createWindow()
 
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
   })
+})
+
+// Закрываем подключение к SQLite перед выходом
+app.on('before-quit', () => {
+  closeDatabase()
 })
 
 app.on('window-all-closed', () => {
