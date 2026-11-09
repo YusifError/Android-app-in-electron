@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import TopBar from './components/TopBar/TopBar'
 import SideBarMenu from './components/TopBar/SideBarMenu/SideBarMenu'
@@ -16,28 +16,55 @@ import type { CreateListData } from './components/TopBar/SideBarMenu/CreateListM
 function App(): React.JSX.Element {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
 
-  // Все созданные списки
+  // Списки приложения
   const [taskLists, setTaskLists] = useState<TaskList[]>([])
 
-  // ID выбранного списка
+  // Выбранный список
   const [activeListId, setActiveListId] = useState<string | null>(null)
 
-  // Открытие и закрытие Sidebar
+  // Загрузка данных из SQLite при запуске
+  useEffect(() => {
+    let isMounted = true
+
+    const loadTaskLists = async (): Promise<void> => {
+      try {
+        const lists = await window.api.database.getTaskLists()
+
+        if (isMounted) {
+          setTaskLists(lists)
+        }
+      } catch (error) {
+        console.error('Failed to load task lists:', error)
+
+        if (isMounted) {
+          window.alert('Не удалось загрузить списки из базы данных.')
+        }
+      }
+    }
+
+    loadTaskLists()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  // Открытие Sidebar
   const toggleMenu = (): void => {
     setIsMenuOpen(prev => !prev)
   }
 
-  // Создание списка
-  const handleCreateList = (data: CreateListData): void => {
-    const newList: TaskList = {
-      id: crypto.randomUUID(),
-      name: data.name,
-      color: data.color,
-      tasks: []
-    }
+  // Создание списка в SQLite
+  const handleCreateList = async (data: CreateListData): Promise<void> => {
+    try {
+      const newList = await window.api.database.createTaskList(data)
 
-    setTaskLists(prev => [...prev, newList])
-    setActiveListId(newList.id)
+      setTaskLists(prev => [...prev, newList])
+      setActiveListId(newList.id)
+    } catch (error) {
+      console.error('Failed to create task list:', error)
+      window.alert('Не удалось создать список.')
+    }
   }
 
   // Выбор списка
@@ -52,14 +79,23 @@ function App(): React.JSX.Element {
     setIsMenuOpen(false)
   }
 
-  // Удаление списка
-  const handleDeleteList = (id: string): void => {
-    setTaskLists(prev => prev.filter(list => list.id !== id))
+  // Удаление списка из SQLite
+  const handleDeleteList = async (id: string): Promise<void> => {
+    try {
+      const deleted = await window.api.database.deleteTaskList(id)
 
-    setActiveListId(prev => prev === id ? null : prev)
+      if (!deleted) return
+
+      setTaskLists(prev => prev.filter(list => list.id !== id))
+
+      setActiveListId(prev => prev === id ? null : prev)
+    } catch (error) {
+      console.error('Failed to delete task list:', error)
+      window.alert('Не удалось удалить список.')
+    }
   }
 
-  // Создание задачи в выбранном списке
+  // Создание задачи (пока только в React state)
   const handleCreateTask = (
     listId: string,
     data: TaskDraft
@@ -81,11 +117,10 @@ function App(): React.JSX.Element {
       )
     )
 
-    // Открываем список, в который добавили задачу
     setActiveListId(listId)
   }
 
-  // Изменение статуса задачи
+  // Изменение статуса задачи (пока только в React state)
   const handleToggleTask = (
     listId: string,
     taskId: string
@@ -109,7 +144,7 @@ function App(): React.JSX.Element {
     )
   }
 
-  // Удаление задачи
+  // Удаление задачи (пока только в React state)
   const handleDeleteTask = (
     listId: string,
     taskId: string
@@ -126,7 +161,7 @@ function App(): React.JSX.Element {
     )
   }
 
-  // Получение активного списка
+  // Получаем активный список
   const activeList = taskLists.find(
     list => list.id === activeListId
   ) ?? null
