@@ -156,6 +156,31 @@ function App(): React.JSX.Element {
   }
 
   // Изменение статуса задачи
+  const handleUpdateTask = async (
+    listId: string,
+    taskId: string,
+    data: TaskDraft
+  ): Promise<void> => {
+    const updatedTask = await window.api.database.updateTask(listId, taskId, data)
+
+    if (!updatedTask) {
+      throw new Error('Task not found')
+    }
+
+    setTaskLists(prev =>
+      prev.map(list =>
+        list.id === listId
+          ? {
+              ...list,
+              tasks: list.tasks.map(task =>
+                task.id === taskId ? updatedTask : task
+              )
+            }
+          : list
+      )
+    )
+  }
+
   const handleToggleTask = async (
     listId: string,
     taskId: string
@@ -267,9 +292,11 @@ function App(): React.JSX.Element {
       />
 
       <MainContent
+        key={activeListId ?? 'home'}
         activeList={activeList}
         taskLists={taskLists}
         onCreateTask={handleCreateTask}
+        onUpdateTask={handleUpdateTask}
         onToggleTask={handleToggleTask}
         onDeleteTask={handleDeleteTask}
       />

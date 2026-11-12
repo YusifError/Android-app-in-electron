@@ -176,3 +176,54 @@
 .topbar__menu-btn:hover {
   background-color: #2d2d2d; /* Легкая подсветка при наведении */
 }
+
+.topbar__icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  padding: 4px;
+}
+
+.topbar__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  filter: brightness(0) invert(0.8);
+}
+
+.control-btn:hover .topbar__icon,
+.topbar__button:hover .topbar__icon {
+  filter: brightness(0) invert(1);
+}
+
+.control-btn:focus-visible,
+.topbar__icon-button:focus-visible {
+  outline: 2px solid #64b5f6;
+  outline-offset: -3px;
+}
+
+.topbar__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  padding: 4px;
+}
+
+.topbar__menu-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.topbar__menu-btn:hover .topbar__icon {
+  filter: brightness(0) invert(1);
+}
+
+.topbar__menu-btn:focus-visible {
+  outline: 2px solid #64b5f6;
+  outline-offset: -3px;
+}

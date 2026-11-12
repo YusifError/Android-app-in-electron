@@ -12,6 +12,7 @@ import type {
 interface TaskEditorProps {
   taskLists: TaskList[]
   defaultListId: string
+  task?: Task | null
   onCancel: () => void
   onSave: (listId: string, data: TaskDraft) => Promise<void>
 }
@@ -19,28 +20,29 @@ interface TaskEditorProps {
 function TaskEditor({
   taskLists,
   defaultListId,
+  task,
   onCancel,
   onSave
 }: TaskEditorProps): React.JSX.Element {
 
   // Название и заметка
-  const [title, setTitle] = useState('')
-  const [note, setNote] = useState('')
+  const [title, setTitle] = useState(task?.title ?? '')
+  const [note, setNote] = useState(task?.note ?? '')
 
   // Фотография
-  const [attachment, setAttachment] = useState<TaskAttachment | null>(null)
+  const [attachment, setAttachment] = useState<TaskAttachment | null>(task?.attachment ?? null)
   const [attachmentError, setAttachmentError] = useState('')
 
   // Подзадачи
-  const [subtasks, setSubtasks] = useState<Task[]>([])
+  const [subtasks, setSubtasks] = useState<Task[]>(task?.subtasks ?? [])
   const [subtaskTitle, setSubtaskTitle] = useState('')
 
   // Выбранный список
   const [selectedListId, setSelectedListId] = useState(defaultListId)
 
   // Срок и напоминание
-  const [dueDate, setDueDate] = useState('')
-  const [reminderAt, setReminderAt] = useState('')
+  const [dueDate, setDueDate] = useState(task?.dueDate ?? '')
+  const [reminderAt, setReminderAt] = useState(task?.reminderAt ?? '')
 
   // Состояние сохранения
   const [isSaving, setIsSaving] = useState(false)
@@ -183,7 +185,7 @@ function TaskEditor({
             ← Назад
           </button>
 
-          <h1>Новая задача</h1>
+          <h1>{task ? 'Редактирование задачи' : 'Новая задача'}</h1>
 
           <span />
 
@@ -338,7 +340,7 @@ function TaskEditor({
             <select
               value={selectedListId}
               onChange={(event) => setSelectedListId(event.target.value)}
-              disabled={isSaving}
+              disabled={isSaving || Boolean(task)}
             >
 
               {taskLists.map(list => (
@@ -403,7 +405,7 @@ function TaskEditor({
               className="task-editor__submit"
               disabled={!title.trim() || isSaving}
             >
-              {isSaving ? 'Сохранение...' : 'Создать задачу'}
+              {isSaving ? 'Сохранение...' : task ? 'Сохранить изменения' : 'Создать задачу'}
             </button>
 
           </div>
